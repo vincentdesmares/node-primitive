@@ -13,7 +13,6 @@ const { document } = new JSDOM(
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="stylesheet" href="css/app.css" />
 		<title>primitive.js &ndash; drawing images with geometric primitives</title>
 	</head>
 
@@ -105,10 +104,10 @@ const { document } = new JSDOM(
     // requests to local files work correctly with CORS.
     url: "file://" + process.cwd() + "/",
     features: {
-      FetchExternalResources: ["img"],
-      runScripts: "dangerously",
-      resources: "usable"
+      FetchExternalResources: ["img"]
     },
+    runScripts: "dangerously",
+    resources: "usable",
     virtualConsole
   }
 ).window;
