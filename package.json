@@ -1,0 +1,23 @@
+{
+  "name": "node-primitive",
+  "version": "0.0",
+  "description": "A port of primitive.js (primitive.lol) for Node.js",
+  "keywords": [
+    "dom",
+    "svg",
+    "thumbnails",
+    "primitive",
+    "shapes"
+  ],
+  "maintainers": [
+    "Vincent Desmares <vincent.desmares@gmail.com>"
+  ],
+  "license": "MIT",
+  "repository": "vincentdesmares/node-primitive",
+  "main": "./src/api.js",
+  "dependencies": {
+    "canvas": "^1.6.7",
+    "jest": "^21.2.1",
+    "jsdom": "^11.3.0"
+  }
+}
