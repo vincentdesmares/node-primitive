@@ -161,19 +161,28 @@ async function go(original, cfg, document) {
   let serializer = new XMLSerializer();
 
   optimizer.onStep = step => {
-    console.log("Step start", step);
+    console.log("On Step called");
     if (step) {
-      result.drawStep(step);
-      svg.appendChild(step.toSVG());
-      let percent = (100 * (1 - step.distance)).toFixed(2);
-      nodes.vectorText.value = serializer.serializeToString(svg);
-      nodes.steps.innerHTML = `(${++steps} of ${cfg.steps}, ${percent}% similar)`;
+      try {
+        result.drawStep(step);
+        svg.appendChild(step.toSVG());
+        //console.log(svg.outerHTML);
+        let percent = (100 * (1 - step.distance)).toFixed(2);
+        nodes.vectorText.value = serializer.serializeToString(svg);
+      } catch (e) {
+        console.log("error on step", e.message);
+      }
     }
   };
-  return await optimizer.start();
+  const lastStep = await optimizer.start();
+  svg.appendChild(lastStep.toSVG());
+  return svg.outerHTML.replace(
+    "<svg",
+    '<svg xmlns="http://www.w3.org/2000/svg"'
+  );
 }
 
-async function generateSvg(url, cfg) {
+async function generateSVG(url, cfg) {
   console.log("Processing called");
   const original = await CanvasWrapper.original(url, cfg, document);
   console.log("got original");
@@ -200,4 +209,4 @@ function syncType() {
   });
 }
 
-exports.generateSvg = generateSvg;
+exports.generateSVG = generateSVG;

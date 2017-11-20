@@ -1,7 +1,48 @@
 # node-primitive
-A port of primitive.js (primitive.lol) for Node.js
+A port of primitive.js (primitive.lol) for Node.js.
+
+I don't like to have anything to install except nvm. So I adapted primitive.js for Node.js to avoid having to install GO when using sqip.
+
+# Quick start
+
+```javascript
+
+const { generateSVG } = require("./../src/api");
+const { Triangle } = require("./../src/shape");
+
+const cfg = {
+  alpha: 0.5,
+  computeSize: 256,
+  fill: "rgb(244, 244, 244)",
+  height: 256,
+  mutateAlpha: true,
+  mutations: 30,
+  scale: 2,
+  shapeTypes: [Triangle],
+  shapes: 102,
+  steps: 50,
+  viewSize: 512,
+  width: 256
+};
+
+const SVGString = await generateSVG("test/profile.png", cfg);
+```
+
+## Warning
+
+This script is really slow.
+
+## Todo
+
+- [ ] Check why onStep is removed the result is bad
+- [ ] Remove UI stuf
+- [ ] Avoid promises when possible
+- [ ] Fix the exports to use default exports when only one function/class is exposed
+- [ ] Replace console.log by debug
+- [ ] Publish the package on npm and update the quick start
 
 ## References
 
 * [primitive.js](https://github.com/ondras/primitive.js)
 * [Testing primitive.js live](https://ondras.github.io/primitive.js/)
+* [SQIP](https://github.com/technopagan/sqip)

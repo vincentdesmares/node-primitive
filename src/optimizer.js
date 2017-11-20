@@ -22,31 +22,31 @@ class Optimizer {
     return this._addShape();
   }
 
-  _addShape() {
-    return this._findBestStep()
-      .then(step => this._optimizeStep(step))
-      .then(step => {
-        this._steps++;
-        if (step.distance < this.state.distance) {
-          /* better than current state, epic */
-          this.state = step.apply(this.state);
-          console.log(
-            "switched to new state (%s) with distance: %s",
-            this._steps,
-            this.state.distance
-          );
-          this.onStep(step);
-        } else {
-          /* worse than current state, discard */
-          this.onStep(null);
-        }
-        this._continue();
-      });
+  async _addShape() {
+    let step = await this._findBestStep();
+    step = await this._optimizeStep(step);
+    this._steps++;
+    if (step.distance < this.state.distance) {
+      /* better than current state, epic */
+      this.state = step.apply(this.state);
+      console.log(
+        "switched to new state (%s) with distance: %s",
+        this._steps,
+        this.state.distance
+      );
+      this.onStep(step);
+    } else {
+      /* worse than current state, discard */
+      this.onStep(null);
+    }
+    return await this._continue(step);
   }
 
-  _continue() {
+  async _continue(lastStep) {
+    console.log("continuing");
     if (this._steps < this.cfg.steps) {
-      setTimeout(() => this._addShape(), 10);
+      console.log("Adding a new shape");
+      return await this._addShape();
     } else {
       let time = Date.now() - this._ts;
       console.log("target distance %s", this.state.distance);
@@ -55,6 +55,7 @@ class Optimizer {
         this.state.target.distance(this.state.canvas)
       );
       console.log("finished in %s", time);
+      return lastStep;
     }
   }
 

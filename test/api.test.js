@@ -1,7 +1,5 @@
-const { generateSvg } = require("./../src/api");
+const { generateSVG } = require("./../src/api");
 const { Triangle } = require("./../src/shape");
-
-//process("./profile.png");
 
 const cfg = {
   alpha: 0.5,
@@ -18,7 +16,8 @@ const cfg = {
   width: 256
 };
 
-test("adds 1 + 2 to equal 3", async () => {
-  const result = await generateSvg("test/profile.png", cfg);
-  expect(result).toBe(3);
+test("Check that the SVG is returned", async () => {
+  const result = await generateSVG("test/profile.png", cfg);
+  console.log(result);
+  expect(result).toNotBe(null);
 });
