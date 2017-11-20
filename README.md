@@ -8,7 +8,7 @@ Origin picture, 329KB -> Generated svg 5KB, 100 primitives
 ![alt text](https://github.com/vincentdesmares/node-primitive/raw/master/samples/profile.png "Origin picture (329KB)")
 ![alt text](https://github.com/vincentdesmares/node-primitive/raw/master/samples/generated.png "Generated svg (5KB)")
 
-I don't like to have anything to install except nvm. So I adapted primitive.js for Node.js to avoid having to install GO when using sqip.
+I don't like to install anything except nvm on my node projects. So I adapted primitive.js to work with Node.js in order to avoid having to install GO when using sqip.
 
 # Quick start
 
