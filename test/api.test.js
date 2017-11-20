@@ -17,7 +17,7 @@ const cfg = {
 };
 
 test("Check that the SVG is returned", async () => {
-  const result = await generateSVG("test/profile.png", cfg);
+  const result = await generateSVG("samples/profile.png", cfg);
   console.log(result);
   expect(result).toNotBe(null);
 });
