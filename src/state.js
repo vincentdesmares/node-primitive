@@ -7,4 +7,4 @@ class State {
   }
 }
 
-exports.default = State;
+exports.State = State;

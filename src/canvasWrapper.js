@@ -1,4 +1,5 @@
 const util = require("./util.js");
+const canvas = require("canvas");
 
 function getScale(width, height, limit) {
   return Math.max(width / limit, height / limit, 1);
@@ -31,7 +32,7 @@ function getFill(canvas) {
   return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
 }
 
-function svgRect(w, h) {
+function svgRect(w, h, document) {
   let node = document.createElementNS(util.SVGNS, "rect");
   node.setAttribute("x", 0);
   node.setAttribute("y", 0);
@@ -43,7 +44,7 @@ function svgRect(w, h) {
 
 /* Canvas: a wrapper around a <canvas> element */
 class CanvasWrapper {
-  static empty(cfg, svg) {
+  static empty(cfg, svg, document) {
     if (svg) {
       let node = document.createElementNS(util.SVGNS, "svg");
       node.setAttribute("viewBox", `0 0 ${cfg.width} ${cfg.height}`);
@@ -57,51 +58,62 @@ class CanvasWrapper {
       cp.setAttribute("id", "clip");
       cp.setAttribute("clipPathUnits", "objectBoundingBox");
 
-      let rect = svgRect(cfg.width, cfg.height);
+      let rect = svgRect(cfg.width, cfg.height, document);
       cp.appendChild(rect);
 
-      rect = svgRect(cfg.width, cfg.height);
+      rect = svgRect(cfg.width, cfg.height, document);
       rect.setAttribute("fill", cfg.fill);
       node.appendChild(rect);
 
       return node;
     } else {
-      return new this(cfg.width, cfg.height).fill(cfg.fill);
+      return new this(cfg.width, cfg.height, document).fill(cfg.fill);
     }
   }
 
-  static original(url, cfg) {
+  static original(url, cfg, document) {
     if (url == "test") {
       return Promise.resolve(this.test(cfg));
     }
 
+    console.log("document", document);
     return new Promise((resolve, reject) => {
       console.log("Loading the image", url);
       try {
-        let img = new Image();
-        img.src = url;
+        let img = new document.defaultView.Image();
+        img.onerror = console.log;
         img.onload = e => {
           console.log("image loaded");
-          let w = img.naturalWidth;
-          let h = img.naturalHeight;
+          console.log("document2", document);
+          try {
+            let w = img.width;
+            let h = img.height;
+            console.log("w/h", w, h);
 
-          let computeScale = getScale(w, h, cfg.computeSize);
-          cfg.width = w / computeScale;
-          cfg.height = h / computeScale;
+            let computeScale = getScale(w, h, cfg.computeSize);
+            cfg.width = w / computeScale;
+            cfg.height = h / computeScale;
 
-          let viewScale = getScale(w, h, cfg.viewSize);
+            let viewScale = getScale(w, h, cfg.viewSize);
 
-          cfg.scale = computeScale / viewScale;
+            cfg.scale = computeScale / viewScale;
 
-          let canvas = this.empty(cfg);
-          canvas.ctx.drawImage(img, 0, 0, cfg.width, cfg.height);
+            let canvas = this.empty(cfg, null, document);
+            console.log("img", img, cfg.width, cfg.height);
+            canvas.ctx.drawImage(img, 0, 0, cfg.width, cfg.height);
 
-          if (cfg.fill == "auto") {
-            cfg.fill = getFill(canvas);
+            if (cfg.fill == "auto") {
+              cfg.fill = getFill(canvas);
+            }
+
+            console.log("resolving canvas");
+            resolve(canvas);
+          } catch (e) {
+            console.log("error resolving canvas", e.message, e.stack);
           }
-
-          resolve(canvas);
         };
+        img.src = url;
+        img.setAttribute("src", url);
       } catch (e) {
         console.log(e);
         reject(e.message);
@@ -141,7 +153,8 @@ class CanvasWrapper {
     return canvas;
   }
 
-  constructor(width, height) {
+  constructor(width, height, document) {
+    this.document = document;
     this.node = document.createElement("canvas");
     this.node.width = width;
     this.node.height = height;
@@ -150,7 +163,11 @@ class CanvasWrapper {
   }
 
   clone() {
-    let otherCanvas = new this.constructor(this.node.width, this.node.height);
+    let otherCanvas = new this.constructor(
+      this.node.width,
+      this.node.height,
+      this.document
+    );
     otherCanvas.ctx.drawImage(this.node, 0, 0);
     return otherCanvas;
   }

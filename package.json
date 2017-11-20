@@ -18,6 +18,7 @@
   "dependencies": {
     "canvas": "^1.6.7",
     "jest": "^21.2.1",
-    "jsdom": "^11.3.0"
+    "jsdom": "^11.3.0",
+    "xmlserializer": "^0.6.0"
   }
 }

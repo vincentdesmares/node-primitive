@@ -1,10 +1,11 @@
 const util = require("./util.js");
-const State = require("./state");
+const { State } = require("./state");
 
 /* Step: a Shape, color and alpha */
 class Step {
-  constructor(shape, cfg) {
+  constructor(shape, cfg, document) {
     this.shape = shape;
+    this.document = document;
     this.cfg = cfg;
     this.alpha = cfg.alpha;
 
@@ -65,4 +66,4 @@ class Step {
   }
 }
 
-exports.default = Step;
+exports.Step = Step;

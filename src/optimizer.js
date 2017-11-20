@@ -1,12 +1,16 @@
-const Step = require("./step");
-const State = require("./state");
-const CanvasWrapper = require("./canvasWrapper");
+const { Step } = require("./step");
+const { State } = require("./state");
+const { CanvasWrapper } = require("./canvasWrapper");
 const { Shape } = require("./shape");
 
 class Optimizer {
-  constructor(original, cfg) {
+  constructor(original, cfg, document) {
+    if (!document) {
+      throw new Error("Document required");
+    }
+    this.document = document;
     this.cfg = cfg;
-    this.state = new State(original, CanvasWrapper.empty(cfg));
+    this.state = new State(original, CanvasWrapper.empty(cfg, false, document));
     this._steps = 0;
     this.onStep = () => {};
     console.log("initial distance %s", this.state.distance);
@@ -15,11 +19,11 @@ class Optimizer {
   start() {
     console.log("Optimizer starting");
     this._ts = Date.now();
-    this._addShape();
+    return this._addShape();
   }
 
   _addShape() {
-    this._findBestStep()
+    return this._findBestStep()
       .then(step => this._optimizeStep(step))
       .then(step => {
         this._steps++;
@@ -61,13 +65,15 @@ class Optimizer {
     let promises = [];
 
     for (let i = 0; i < LIMIT; i++) {
-      let shape = Shape.create(this.cfg);
+      let shape = Shape.create(this.cfg, this.document);
 
-      let promise = new Step(shape, this.cfg).compute(this.state).then(step => {
-        if (!bestStep || step.distance < bestStep.distance) {
-          bestStep = step;
-        }
-      });
+      let promise = new Step(shape, this.cfg, this.document)
+        .compute(this.state)
+        .then(step => {
+          if (!bestStep || step.distance < bestStep.distance) {
+            bestStep = step;
+          }
+        });
       promises.push(promise);
     }
 
@@ -121,4 +127,4 @@ class Optimizer {
   }
 }
 
-exports.default = Optimizer;
+exports.Optimizer = Optimizer;

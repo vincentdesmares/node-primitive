@@ -1,8 +1,15 @@
 const { CanvasWrapper } = require("./canvasWrapper");
-const Optimizer = require("./optimizer");
+const { Optimizer } = require("./optimizer");
 const jsdom = require("jsdom");
 const canvas = require("canvas");
 const { JSDOM } = jsdom;
+const xmlserializer = require("XMLSerializer");
+
+function XMLSerializer() {}
+
+XMLSerializer.prototype.serializeToString = function(node) {
+  return xmlserializer.serializeToString(node);
+};
 
 const virtualConsole = new jsdom.VirtualConsole();
 virtualConsole.sendTo(console);
@@ -17,7 +24,6 @@ const { document } = new JSDOM(
 	</head>
 
 	<body>
-		<p><img src="logo.png" alt="Logo" /></p>
 		<h1>primitive.js</h1>
 		<p>This is a JavaScript port of the <a href="http://primitive.lol">http://primitive.lol</a> app, originally created by Michael Fogleman. Its purpose is to re-draw existing images using only primitive geometric shapes.</p>
 		<p>You can find some additional (technical) information in the <a href="https://github.com/ondras/primitive.js">GitHub repository</a>. This page acts as a small demo where you can experiment with the algorithm.</p>
@@ -111,6 +117,9 @@ const { document } = new JSDOM(
     virtualConsole
   }
 ).window;
+
+console.log('Base folder set to "file://' + process.cwd() + '/"');
+
 const nodes = {
   output: document.querySelector("#output"),
   original: document.querySelector("#original"),
@@ -123,7 +132,7 @@ const nodes = {
 
 let steps;
 
-function go(original, cfg) {
+async function go(original, cfg, document) {
   nodes.steps.innerHTML = "";
   nodes.original.innerHTML = "";
   nodes.raster.innerHTML = "";
@@ -133,18 +142,18 @@ function go(original, cfg) {
   nodes.output.style.display = "";
   nodes.original.appendChild(original.node);
 
-  let optimizer = new Optimizer(original, cfg);
+  let optimizer = new Optimizer(original, cfg, document);
   steps = 0;
 
   let cfg2 = Object.assign({}, cfg, {
     width: cfg.scale * cfg.width,
     height: cfg.scale * cfg.height
   });
-  let result = CanvasWrapper.empty(cfg2, false);
+  let result = CanvasWrapper.empty(cfg2, false, document);
   result.ctx.scale(cfg.scale, cfg.scale);
   nodes.raster.appendChild(result.node);
 
-  let svg = CanvasWrapper.empty(cfg, true);
+  let svg = CanvasWrapper.empty(cfg, true, document);
   svg.setAttribute("width", cfg2.width);
   svg.setAttribute("height", cfg2.height);
   nodes.vector.appendChild(svg);
@@ -152,6 +161,7 @@ function go(original, cfg) {
   let serializer = new XMLSerializer();
 
   optimizer.onStep = step => {
+    console.log("Step start", step);
     if (step) {
       result.drawStep(step);
       svg.appendChild(step.toSVG());
@@ -160,18 +170,18 @@ function go(original, cfg) {
       nodes.steps.innerHTML = `(${++steps} of ${cfg.steps}, ${percent}% similar)`;
     }
   };
-  optimizer.start();
-
-  document.documentElement.scrollTop = document.documentElement.scrollHeight;
+  return await optimizer.start();
 }
 
-async function generateSvg(url) {
+async function generateSvg(url, cfg) {
   console.log("Processing called");
-  let cfg = {};
-
-  const original = await CanvasWrapper.original(url, cfg);
+  const original = await CanvasWrapper.original(url, cfg, document);
   console.log("got original");
-  return go(original, cfg);
+  try {
+    return await go(original, cfg, document);
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 function init() {

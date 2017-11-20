@@ -35,7 +35,7 @@ exports.clamp = (x, min, max) => {
 };
 
 exports.clampColor = x => {
-  return clamp(x, 0, 255);
+  return exports.clamp(x, 0, 255);
 };
 
 exports.distanceToDifference = (distance, pixels) => {
@@ -109,7 +109,7 @@ function computeColor(offset, imageData, alpha) {
     }
   }
 
-  return color.map(x => ~~(x / count)).map(clampColor);
+  return color.map(x => ~~(x / count)).map(exports.clampColor);
 }
 
 function computeDifferenceChange(offset, imageData, color) {
