@@ -1,5 +1,5 @@
 # node-primitive
-A port of primitive.js (primitive.lol) for Node.js.
+A port of primitive.js (primitive.lol) for Node.js thanks to the amazing [jsdom](https://github.com/tmpvar/jsdom) library.
 
 This library allow you to create an SVG representation of a given image using primitives.
 
