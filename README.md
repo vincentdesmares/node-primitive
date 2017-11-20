@@ -1,6 +1,13 @@
 # node-primitive
 A port of primitive.js (primitive.lol) for Node.js.
 
+This library allow you to create an SVG representation of a given image using primitives.
+
+Inline-style: 
+![alt text](https://github.com/vincentdesmares/node-primitive/raw/master/test/profile.png "Logo Title Text 1")
+Inline-style: 
+![alt text](https://github.com/vincentdesmares/node-primitive/raw/master/test/generated.png "Logo Title Text 1")
+
 I don't like to have anything to install except nvm. So I adapted primitive.js for Node.js to avoid having to install GO when using sqip.
 
 # Quick start
