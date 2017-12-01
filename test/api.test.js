@@ -13,7 +13,8 @@ const cfg = {
   shapes: 102,
   steps: 50,
   viewSize: 512,
-  width: 256
+  width: 256,
+  blur: true
 };
 
 test("Check that the SVG is returned", async () => {

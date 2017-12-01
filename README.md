@@ -48,6 +48,10 @@ This script is really slow.
 - [ ] Replace console.log by debug
 - [ ] Publish the package on npm and update the quick start
 
+# Thanks
+
+Thanks to José M. Pérez to have open my eyes on [image placeholder generation](https://medium.freecodecamp.org/using-svg-as-placeholders-more-image-loading-techniques-bed1b810ab2c).
+
 ## References
 
 * [primitive.js](https://github.com/ondras/primitive.js)

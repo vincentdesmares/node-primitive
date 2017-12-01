@@ -19,6 +19,8 @@
     "canvas": "^1.6.7",
     "jest": "^21.2.1",
     "jsdom": "^11.3.0",
+    "svgo": "^1.0.3",
     "xmlserializer": "^0.6.0"
-  }
+  },
+  "postinstall": "cd node_modules/canvas && node-gyp rebuild"
 }
