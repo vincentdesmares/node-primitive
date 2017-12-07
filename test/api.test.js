@@ -14,7 +14,7 @@ const cfg = {
   steps: 10,
   viewSize: 512,
   width: 256,
-  blur: true
+  blur: 35
 }
 
 test('Check that the SVG is returned', async () => {

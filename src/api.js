@@ -190,7 +190,8 @@ async function go (original, cfg, document) {
   const svgAsString = await runSVGO(svg.outerHTML)
   const finalSvg = replaceSVGAttrs(svgAsString, {
     width: cfg.width,
-    height: cfg.height
+    height: cfg.height,
+    blur: cfg.blur
   })
   return finalSvg
 }
@@ -211,12 +212,12 @@ const patchSVGGroup = svg => {
 // Add viewbox and preserveAspectRatio attributes as well as a Gaussian Blur filter to the SVG
 // When missing, add group (element with blur applied) using patchSVGGroup()
 // We initially worked with a proper DOM parser to manipulate the SVG's XML, but it was very opinionated about SVG syntax and kept introducing unwanted tags. So we had to resort to RegEx replacements
-const replaceSVGAttrs = (svg, { width, height }) => {
+const replaceSVGAttrs = (svg, { width, height, blur = 55 }) => {
   let blurStdDev = 12
   let blurFilterId = 'b'
   let newSVG = svg
   if (svg.match(/<svg.*?><path.*?><g/) === null) {
-    blurStdDev = 55
+    blurStdDev = blur
     newSVG = patchSVGGroup(newSVG)
     blurFilterId = 'c'
   } else {
