@@ -45,7 +45,6 @@ class Step {
     )
     this.color = color
     let currentDifference = util.distanceToDifference(state.distance, pixels)
-    if (-differenceChange > currentDifference) debugger
     this.distance = util.differenceToDistance(
       currentDifference + differenceChange,
       pixels

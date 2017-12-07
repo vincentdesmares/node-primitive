@@ -40,14 +40,14 @@ class Optimizer {
       /* worse than current state, discard */
       this.onStep(null)
     }
-    return await this._continue(step)
+    return this._continue(step)
   }
 
   async _continue (lastStep) {
     debugInternal('continuing')
     if (this._steps < this.cfg.steps) {
       debugInternal('Adding a new shape')
-      return await this._addShape()
+      return this._addShape()
     } else {
       let time = Date.now() - this._ts
       debugInternal('target distance %s', this.state.distance)

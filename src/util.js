@@ -1,5 +1,4 @@
 exports.SVGNS = 'http://www.w3.org/2000/svg'
-
 ;(function () {
   const values = [
     0.5,
@@ -47,8 +46,8 @@ exports.differenceToDistance = (difference, pixels) => {
 }
 
 exports.difference = (data, dataOther) => {
-  let sum = 0,
-    diff
+  let sum = 0
+  let diff
   for (let i = 0; i < data.data.length; i++) {
     if (i % 4 == 3) {
       continue

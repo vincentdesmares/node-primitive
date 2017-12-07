@@ -73,7 +73,7 @@ class CanvasWrapper {
   }
 
   static original (url, cfg, document) {
-    if (url == 'test') {
+    if (url === 'test') {
       return Promise.resolve(this.test(cfg))
     }
 
@@ -148,7 +148,7 @@ class CanvasWrapper {
     ctx.arc(w * 3 / 4, h / 2, w / 7, 0, 2 * Math.PI, true)
     ctx.fill()
 
-    if (cfg.fill == 'auto') {
+    if (cfg.fill === 'auto') {
       cfg.fill = getFill(canvas)
     }
 

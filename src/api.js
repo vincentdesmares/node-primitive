@@ -22,93 +22,93 @@ virtualConsole.sendTo(console)
 const { document } = new JSDOM(
   `<!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>primitive.js &ndash; drawing images with geometric primitives</title>
-	</head>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>primitive.js &ndash; drawing images with geometric primitives</title>
+    </head>
 
-	<body>
-		<h1>primitive.js</h1>
-		<p>This is a JavaScript port of the <a href="http://primitive.lol">http://primitive.lol</a> app, originally created by Michael Fogleman. Its purpose is to re-draw existing images using only primitive geometric shapes.</p>
-		<p>You can find some additional (technical) information in the <a href="https://github.com/ondras/primitive.js">GitHub repository</a>. This page acts as a small demo where you can experiment with the algorithm.</p>
-		
-		<h2>Try it in your browser!</h2>
-		<form>
-			<h3>Pick an image file from your computer</h3>
-			<input type="file" />
-			<h3>Check or adjust various rendering options</h3>
-			<div>
-				<p>Add <span class="value"></span> geometric shapes
-					<em>(large number: better results, slower)</em>
-				</p>
-				<input name="steps" type="range" min="1" max="500" value="50" />
-			</div>
-			<div>
-				<p>Use these shape types:</p>
-				<label><input type="checkbox" name="shapeType" value="triangle" checked="checked" />Triangles</label><br/>
-				<label><input type="checkbox" name="shapeType" value="rectangle" />Rectangles</label><br/>
-				<label><input type="checkbox" name="shapeType" value="ellipse" />Ellipses</label><br/>
-				<label><input type="checkbox" name="shapeType" value="smiley" />Smileys</label>
-			</div>
-			<div>
-				<p>Fill background with:</p>
-				<label><input type="radio" name="fill" value="auto" checked="checked" />an auto-detected color</label><br/>
-				<label><input type="radio" name="fill" value="fixed" />a fixed color: </label>
-				<input type="color" value="#ffffff" name="fill-color" />
-			</div>
-			<div>
-				<p>Starting opacity: <span class="value"></span></p>
-				<input name="alpha" type="range" min="0" max="1" step="0.1" value="0.5" /><br/>
-				<label><input type="checkbox" name="mutateAlpha" checked="checked" />Adjust opacity automatically</label>
-			</div>
-			<div>
-				<p>Computation size: <span class="value"></span> pixels
-					<em>(smaller is faster)</em>
-				</p>
-				<input name="computeSize" type="range" min="128" max="512" value="256" /><br/>
-			</div>
-			<div>
-				<p>Viewing size: <span class="value"></span> pixels</p>
-				<input name="viewSize" type="range" min="256" max="2048" value="512" />
-			</div>
-			<div>
-				<p>Start every iteration with <span class="value"></span> random shapes
-					<em>(larger number: more precise results, slower)</em>
-				</p>
-				<input name="shapes" type="range" min="1" max="1000" value="200" />
-			</div>
-			<div>
-				<p>Stop shape optimization after <span class="value"></span> failures
-					<em>(larger number: more precise results, slower)</em>
-				</p>
-				<input name="mutations" type="range" min="0" max="100" value="30" />
-			</div>
+    <body>
+        <h1>primitive.js</h1>
+        <p>This is a JavaScript port of the <a href="http://primitive.lol">http://primitive.lol</a> app, originally created by Michael Fogleman. Its purpose is to re-draw existing images using only primitive geometric shapes.</p>
+        <p>You can find some additional (technical) information in the <a href="https://github.com/ondras/primitive.js">GitHub repository</a>. This page acts as a small demo where you can experiment with the algorithm.</p>
+        
+        <h2>Try it in your browser!</h2>
+        <form>
+            <h3>Pick an image file from your computer</h3>
+            <input type="file" />
+            <h3>Check or adjust various rendering options</h3>
+            <div>
+                <p>Add <span class="value"></span> geometric shapes
+                    <em>(large number: better results, slower)</em>
+                </p>
+                <input name="steps" type="range" min="1" max="500" value="50" />
+            </div>
+            <div>
+                <p>Use these shape types:</p>
+                <label><input type="checkbox" name="shapeType" value="triangle" checked="checked" />Triangles</label><br/>
+                <label><input type="checkbox" name="shapeType" value="rectangle" />Rectangles</label><br/>
+                <label><input type="checkbox" name="shapeType" value="ellipse" />Ellipses</label><br/>
+                <label><input type="checkbox" name="shapeType" value="smiley" />Smileys</label>
+            </div>
+            <div>
+                <p>Fill background with:</p>
+                <label><input type="radio" name="fill" value="auto" checked="checked" />an auto-detected color</label><br/>
+                <label><input type="radio" name="fill" value="fixed" />a fixed color: </label>
+                <input type="color" value="#ffffff" name="fill-color" />
+            </div>
+            <div>
+                <p>Starting opacity: <span class="value"></span></p>
+                <input name="alpha" type="range" min="0" max="1" step="0.1" value="0.5" /><br/>
+                <label><input type="checkbox" name="mutateAlpha" checked="checked" />Adjust opacity automatically</label>
+            </div>
+            <div>
+                <p>Computation size: <span class="value"></span> pixels
+                    <em>(smaller is faster)</em>
+                </p>
+                <input name="computeSize" type="range" min="128" max="512" value="256" /><br/>
+            </div>
+            <div>
+                <p>Viewing size: <span class="value"></span> pixels</p>
+                <input name="viewSize" type="range" min="256" max="2048" value="512" />
+            </div>
+            <div>
+                <p>Start every iteration with <span class="value"></span> random shapes
+                    <em>(larger number: more precise results, slower)</em>
+                </p>
+                <input name="shapes" type="range" min="1" max="1000" value="200" />
+            </div>
+            <div>
+                <p>Stop shape optimization after <span class="value"></span> failures
+                    <em>(larger number: more precise results, slower)</em>
+                </p>
+                <input name="mutations" type="range" min="0" max="100" value="30" />
+            </div>
 
-			<h3>Hit the button to start</h3>
-			<p>This is a CPU-intensive process. It might take a while.</p>
-			<input type="submit" value="Let's go!" />
-		</form>
+            <h3>Hit the button to start</h3>
+            <p>This is a CPU-intensive process. It might take a while.</p>
+            <input type="submit" value="Let's go!" />
+        </form>
 
-		<section id="output">
-			<div>
-				<h3>Original</h3>
-				<div id="original"></div>
-			</div>
-			<div>
-				<h3>Result <span id="steps"></span></h3>
-				<div class="raster" id="raster"></div>
-				<div class="vector" id="vector"></div>
-				<label><input type="radio" name="type" value="raster" checked="checked" />Raster image: right-click to save</label><br/>
-				<label><input type="radio" name="type" value="vector" />Vector image: copy&amp;paste data from the text area below</label><br/>
-				<textarea class="vector" id="vector-text"></textarea>
-			</div>
-		</section>
+        <section id="output">
+            <div>
+                <h3>Original</h3>
+                <div id="original"></div>
+            </div>
+            <div>
+                <h3>Result <span id="steps"></span></h3>
+                <div class="raster" id="raster"></div>
+                <div class="vector" id="vector"></div>
+                <label><input type="radio" name="type" value="raster" checked="checked" />Raster image: right-click to save</label><br/>
+                <label><input type="radio" name="type" value="vector" />Vector image: copy&amp;paste data from the text area below</label><br/>
+                <textarea class="vector" id="vector-text"></textarea>
+            </div>
+        </section>
 
-		<footer>
-			&copy; 2016 <a href="http://ondras.zarovi.cz/">Ondřej Žára</a>, <a href="https://github.com/ondras/primitive.js">GitHub repository</a>
-		</footer>
-	</body>
+        <footer>
+            &copy; 2016 <a href="http://ondras.zarovi.cz/">Ondřej Žára</a>, <a href="https://github.com/ondras/primitive.js">GitHub repository</a>
+        </footer>
+    </body>
 </html>`,
   {
     // Use the current working directory as the document's origin, so
@@ -135,7 +135,7 @@ const nodes = {
   types: Array.from(document.querySelectorAll('#output [name=type]'))
 }
 
-let steps
+let steps = null
 
 async function go (original, cfg, document) {
   nodes.steps.innerHTML = ''
@@ -171,8 +171,6 @@ async function go (original, cfg, document) {
       try {
         result.drawStep(step)
         svg.appendChild(step.toSVG())
-        // console.log(svg.outerHTML);
-        let percent = (100 * (1 - step.distance)).toFixed(2)
         nodes.vectorText.value = serializer.serializeToString(svg)
       } catch (e) {
         debugInternal('error on step', e.message)
@@ -190,11 +188,11 @@ async function go (original, cfg, document) {
   }
 
   const svgAsString = await runSVGO(svg.outerHTML)
-  const final_svg = replaceSVGAttrs(svgAsString, {
+  const finalSvg = replaceSVGAttrs(svgAsString, {
     width: cfg.width,
     height: cfg.height
   })
-  return final_svg
+  return finalSvg
 }
 
 // (Naively) Add Group to SVG
@@ -230,9 +228,9 @@ const replaceSVGAttrs = (svg, { width, height }) => {
   )
 }
 
-const runSVGO = async primitive_svg => {
-  const svgo_instance = new svgo({ multipass: true, floatPrecision: 1 })
-  const result = await svgo_instance.optimize(primitive_svg)
+const runSVGO = async primitiveSvg => {
+  const svgoInstance = new svgo({ multipass: true, floatPrecision: 1 })
+  const result = await svgoInstance.optimize(primitiveSvg)
   return result.data
 }
 
@@ -265,22 +263,6 @@ async function generateSVG (inputFilePath, cfg, outputFilePath) {
   } catch (e) {
     console.log(e)
   }
-}
-
-function init () {
-  nodes.output.style.display = 'none'
-  nodes.types.forEach(input => input.addEventListener('click', syncType))
-  syncType()
-  document.querySelector('form').addEventListener('submit', onSubmit)
-}
-
-function syncType () {
-  nodes.output.className = ''
-  nodes.types.forEach(input => {
-    if (input.checked) {
-      nodes.output.classList.add(input.value)
-    }
-  })
 }
 
 exports.generateSVG = generateSVG

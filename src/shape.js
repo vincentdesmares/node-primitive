@@ -1,6 +1,5 @@
 const { CanvasWrapper } = require('./canvasWrapper')
 const util = require('./util.js')
-const debugInternal = require('debug')('node-primitive:internal')
 
 /* Shape: a geometric primitive with a bbox */
 class Shape {
