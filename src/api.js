@@ -1,19 +1,23 @@
-const { CanvasWrapper } = require("./canvasWrapper");
-const { Optimizer } = require("./optimizer");
-const jsdom = require("jsdom");
-const canvas = require("canvas");
-const { JSDOM } = jsdom;
-const xmlserializer = require("XMLSerializer");
-const svgo = require("svgo");
+const { CanvasWrapper } = require('./canvasWrapper')
+const { Optimizer } = require('./optimizer')
+const jsdom = require('jsdom')
+const canvas = require('canvas')
+const { JSDOM } = jsdom
+const xmlserializer = require('XMLSerializer')
+const svgo = require('svgo')
+const fs = require('fs')
+const filesize = require('filesize')
+const debugVerbose = require('debug')('node-primitive:verbose')
+const debugInternal = require('debug')('node-primitive:internal')
 
-function XMLSerializer() {}
+function XMLSerializer () {}
 
-XMLSerializer.prototype.serializeToString = function(node) {
-  return xmlserializer.serializeToString(node);
-};
+XMLSerializer.prototype.serializeToString = function (node) {
+  return xmlserializer.serializeToString(node)
+}
 
-const virtualConsole = new jsdom.VirtualConsole();
-virtualConsole.sendTo(console);
+const virtualConsole = new jsdom.VirtualConsole()
+virtualConsole.sendTo(console)
 
 const { document } = new JSDOM(
   `<!doctype html>
@@ -109,158 +113,174 @@ const { document } = new JSDOM(
   {
     // Use the current working directory as the document's origin, so
     // requests to local files work correctly with CORS.
-    url: "file://" + process.cwd() + "/",
+    url: 'file://' + process.cwd() + '/',
     features: {
-      FetchExternalResources: ["img"]
+      FetchExternalResources: ['img']
     },
-    runScripts: "dangerously",
-    resources: "usable",
+    runScripts: 'dangerously',
+    resources: 'usable',
     virtualConsole
   }
-).window;
+).window
 
-console.log('Base folder set to "file://' + process.cwd() + '/"');
+debugInternal('Base folder set to "file://' + process.cwd() + '/"')
 
 const nodes = {
-  output: document.querySelector("#output"),
-  original: document.querySelector("#original"),
-  steps: document.querySelector("#steps"),
-  raster: document.querySelector("#raster"),
-  vector: document.querySelector("#vector"),
-  vectorText: document.querySelector("#vector-text"),
-  types: Array.from(document.querySelectorAll("#output [name=type]"))
-};
+  output: document.querySelector('#output'),
+  original: document.querySelector('#original'),
+  steps: document.querySelector('#steps'),
+  raster: document.querySelector('#raster'),
+  vector: document.querySelector('#vector'),
+  vectorText: document.querySelector('#vector-text'),
+  types: Array.from(document.querySelectorAll('#output [name=type]'))
+}
 
-let steps;
+let steps
 
-async function go(original, cfg, document) {
-  nodes.steps.innerHTML = "";
-  nodes.original.innerHTML = "";
-  nodes.raster.innerHTML = "";
-  nodes.vector.innerHTML = "";
-  nodes.vectorText.value = "";
+async function go (original, cfg, document) {
+  nodes.steps.innerHTML = ''
+  nodes.original.innerHTML = ''
+  nodes.raster.innerHTML = ''
+  nodes.vector.innerHTML = ''
+  nodes.vectorText.value = ''
 
-  nodes.output.style.display = "";
-  nodes.original.appendChild(original.node);
+  nodes.output.style.display = ''
+  nodes.original.appendChild(original.node)
 
-  let optimizer = new Optimizer(original, cfg, document);
-  steps = 0;
+  let optimizer = new Optimizer(original, cfg, document)
+  steps = 0
 
   let cfg2 = Object.assign({}, cfg, {
     width: cfg.scale * cfg.width,
     height: cfg.scale * cfg.height
-  });
-  let result = CanvasWrapper.empty(cfg2, false, document);
-  result.ctx.scale(cfg.scale, cfg.scale);
-  nodes.raster.appendChild(result.node);
+  })
+  let result = CanvasWrapper.empty(cfg2, false, document)
+  result.ctx.scale(cfg.scale, cfg.scale)
+  nodes.raster.appendChild(result.node)
 
-  let svg = CanvasWrapper.empty(cfg, true, document);
-  svg.setAttribute("width", cfg2.width);
-  svg.setAttribute("height", cfg2.height);
-  nodes.vector.appendChild(svg);
+  let svg = CanvasWrapper.empty(cfg, true, document)
+  svg.setAttribute('width', cfg2.width)
+  svg.setAttribute('height', cfg2.height)
+  nodes.vector.appendChild(svg)
 
-  let serializer = new XMLSerializer();
+  let serializer = new XMLSerializer()
 
   optimizer.onStep = step => {
-    console.log("On Step called");
+    debugInternal('On Step called')
     if (step) {
       try {
-        result.drawStep(step);
-        svg.appendChild(step.toSVG());
-        //console.log(svg.outerHTML);
-        let percent = (100 * (1 - step.distance)).toFixed(2);
-        nodes.vectorText.value = serializer.serializeToString(svg);
+        result.drawStep(step)
+        svg.appendChild(step.toSVG())
+        // console.log(svg.outerHTML);
+        let percent = (100 * (1 - step.distance)).toFixed(2)
+        nodes.vectorText.value = serializer.serializeToString(svg)
       } catch (e) {
-        console.log("error on step", e.message);
+        debugInternal('error on step', e.message)
       }
     }
-  };
-  const lastStep = await optimizer.start();
-  svg.appendChild(lastStep.toSVG());
+  }
+  const lastStep = await optimizer.start()
+  svg.appendChild(lastStep.toSVG())
 
   if (!cfg.blur) {
     return svg.outerHTML.replace(
-      "<svg",
+      '<svg',
       '<svg xmlns="http://www.w3.org/2000/svg"'
-    );
+    )
   }
 
-  const svgAsString = await runSVGO(svg.outerHTML);
+  const svgAsString = await runSVGO(svg.outerHTML)
   const final_svg = replaceSVGAttrs(svgAsString, {
     width: cfg.width,
     height: cfg.height
-  });
-  return final_svg;
+  })
+  return final_svg
 }
 
 // (Naively) Add Group to SVG
 // For schema, see: https://github.com/fogleman/primitive/blob/master/primitive/model.go#L86
 const patchSVGGroup = svg => {
   const gStartIndex =
-    svg.match(/<path.*?>/).index + svg.match(/<path.*?>/)[0].length;
-  const gEndIndex = svg.match(/<\/svg>/).index;
-  const svgG = `<g filter='url(#c)' fill-opacity='.5'>`;
+    svg.match(/<path.*?>/).index + svg.match(/<path.*?>/)[0].length
+  const gEndIndex = svg.match(/<\/svg>/).index
+  const svgG = `<g filter='url(#c)' fill-opacity='.5'>`
   return `${svg.slice(0, gStartIndex)}${svgG}${svg.slice(
     gStartIndex,
     gEndIndex
-  )}</g></svg>`;
-};
+  )}</g></svg>`
+}
 
 // Add viewbox and preserveAspectRatio attributes as well as a Gaussian Blur filter to the SVG
 // When missing, add group (element with blur applied) using patchSVGGroup()
 // We initially worked with a proper DOM parser to manipulate the SVG's XML, but it was very opinionated about SVG syntax and kept introducing unwanted tags. So we had to resort to RegEx replacements
 const replaceSVGAttrs = (svg, { width, height }) => {
-  let blurStdDev = 12;
-  let blurFilterId = "b";
-  let newSVG = svg;
+  let blurStdDev = 12
+  let blurFilterId = 'b'
+  let newSVG = svg
   if (svg.match(/<svg.*?><path.*?><g/) === null) {
-    blurStdDev = 55;
-    newSVG = patchSVGGroup(newSVG);
-    blurFilterId = "c";
+    blurStdDev = 55
+    newSVG = patchSVGGroup(newSVG)
+    blurFilterId = 'c'
   } else {
-    newSVG = newSVG.replace(/(<g)/, '<g filter="url(#b)"');
+    newSVG = newSVG.replace(/(<g)/, '<g filter="url(#b)"')
   }
   return newSVG.replace(
     /(<svg)(.*?)(>)/,
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${
-      height
-    }"><filter id="${blurFilterId}"><feGaussianBlur stdDeviation="${
-      blurStdDev
-    }" /></filter>`
-  );
-};
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}"><filter id="${blurFilterId}"><feGaussianBlur stdDeviation="${blurStdDev}" /></filter>`
+  )
+}
 
 const runSVGO = async primitive_svg => {
-  const svgo_instance = new svgo({ multipass: true, floatPrecision: 1 });
-  const result = await svgo_instance.optimize(primitive_svg);
-  return result.data;
-};
+  const svgo_instance = new svgo({ multipass: true, floatPrecision: 1 })
+  const result = await svgo_instance.optimize(primitive_svg)
+  return result.data
+}
 
-async function generateSVG(url, cfg) {
-  console.log("Processing called");
-  const original = await CanvasWrapper.original(url, cfg, document);
-  console.log("got original");
+async function generateSVG (inputFilePath, cfg, outputFilePath) {
+  const original = await CanvasWrapper.original(inputFilePath, cfg, document)
   try {
-    return await go(original, cfg, document);
+    const statsInput = fs.statSync(inputFilePath)
+    debugVerbose(
+      `Transforming ${inputFilePath}, ${filesize(statsInput.size, {
+        round: 0
+      })}`
+    )
+    const result = await go(original, cfg, document)
+
+    if (outputFilePath) {
+      await fs.writeFile(outputFilePath, result)
+      const statsOutput = fs.statSync(outputFilePath)
+      debugVerbose(
+        `Generated ${outputFilePath}, ${filesize(statsOutput.size, {
+          round: 0
+        })}, ${Math.floor(
+          (statsInput.size - statsOutput.size) / statsInput.size * 100
+        )}% reduced, ${filesize(statsInput.size - statsOutput.size, {
+          round: 0
+        })} saved.`
+      )
+    }
+
+    return result
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
 }
 
-function init() {
-  nodes.output.style.display = "none";
-  nodes.types.forEach(input => input.addEventListener("click", syncType));
-  syncType();
-  document.querySelector("form").addEventListener("submit", onSubmit);
+function init () {
+  nodes.output.style.display = 'none'
+  nodes.types.forEach(input => input.addEventListener('click', syncType))
+  syncType()
+  document.querySelector('form').addEventListener('submit', onSubmit)
 }
 
-function syncType() {
-  nodes.output.className = "";
+function syncType () {
+  nodes.output.className = ''
   nodes.types.forEach(input => {
     if (input.checked) {
-      nodes.output.classList.add(input.value);
+      nodes.output.classList.add(input.value)
     }
-  });
+  })
 }
 
-exports.generateSVG = generateSVG;
+exports.generateSVG = generateSVG

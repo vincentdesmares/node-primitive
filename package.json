@@ -16,11 +16,23 @@
   "repository": "vincentdesmares/node-primitive",
   "main": "./src/api.js",
   "dependencies": {
+    "babel-eslint": "^8.0.3",
     "canvas": "^1.6.7",
+    "debug": "^3.1.0",
+    "eslint": "^4.12.1",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "filesize": "^3.5.11",
     "jest": "^21.2.1",
     "jsdom": "^11.3.0",
     "svgo": "^1.0.3",
     "xmlserializer": "^0.6.0"
   },
-  "postinstall": "cd node_modules/canvas && node-gyp rebuild"
+  "postinstall": "cd node_modules/canvas && node-gyp rebuild",
+  "devDependencies": {
+    "prettier": "1.9.1"
+  }
 }
