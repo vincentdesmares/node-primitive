@@ -1,6 +1,6 @@
 {
   "name": "node-primitive",
-  "version": "0.1",
+  "version": "0.0.1",
   "description": "A port of primitive.js (primitive.lol) for Node.js",
   "keywords": ["dom", "svg", "thumbnails", "primitive", "shapes"],
   "maintainers": ["Vincent Desmares <vincent.desmares@gmail.com>"],
