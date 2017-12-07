@@ -33,14 +33,16 @@ const cfg = {
   mutations: 30,
   scale: 2,
   shapeTypes: [Triangle],
-  shapes: 102,
-  steps: 50,
+  shapes: 20,
+  steps: 20,
   viewSize: 512,
   width: 256,
   blur: 35
 };
 
-const SVGString = await generateSVG("test/profile.png", cfg);
+const SVGString = await generateSVG("samples/profile.png", cfg);
+// or
+await generateSVG("samples/profile.png", cfg, "output.svg");
 ```
 
 ## Warning
